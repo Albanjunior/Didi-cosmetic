@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Didi Shop — Beauté & Élégance</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+:root{--rose:#e83e7d;--rose-d:#c92f68;--rose-l:#fff3f7}
+body{color:#222;background:#fff}
+button{font:inherit}
+:focus-visible{outline:3px solid #222;outline-offset:2px}
+header{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid #eee}
+.topbar{max-width:1200px;margin:auto;padding:14px 25px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.logo{font-size:30px;font-weight:bold;color:var(--rose);font-style:italic}
+.logo span{color:#222}
+.search{flex:1;max-width:500px;display:flex;border:1px solid #ddd;border-radius:30px;overflow:hidden}
+.search input{flex:1;border:0;outline:0;padding:12px 18px;min-width:0}
+.search button{width:50px;border:0;background:var(--rose);color:#fff;cursor:pointer}
+.cart-button{border:0;background:#fff;font-size:26px;cursor:pointer;position:relative}
+.cart-count{position:absolute;top:-6px;right:-8px;background:var(--rose);color:#fff;min-width:20px;height:20px;border-radius:10px;font-size:12px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+nav{max-width:1200px;margin:auto;display:flex;justify-content:center;gap:35px;padding:10px}
+nav a{color:#333;text-decoration:none;font-size:14px}
+nav a:hover{color:var(--rose)}
+.hero{min-height:480px;background:linear-gradient(120deg,#ffe2ec,#fff);display:flex;align-items:center;padding:50px 8%}
+.hero-content{max-width:560px}
+.hero small{color:var(--rose);font-weight:bold}
+.hero h1{font-size:58px;margin:14px 0;line-height:1.05}
+.hero h1 span{color:var(--rose)}
+.hero p{color:#555;line-height:1.7;margin-bottom:25px}
+.btn{display:inline-block;padding:13px 24px;border-radius:8px;background:var(--rose);color:#fff;text-decoration:none;border:0;cursor:pointer;font-weight:bold}
+.btn:hover{background:var(--rose-d)}
+section{max-width:1200px;margin:auto;padding:55px 25px}
+.section-title{text-align:center;margin-bottom:30px}
+.section-title h2{font-size:32px}
+.section-title p{color:#666;margin-top:8px}
+.categories{display:grid;grid-template-columns:repeat(6,1fr);gap:15px}
+.category{background:var(--rose-l);border:2px solid transparent;border-radius:15px;padding:24px 10px;text-align:center;cursor:pointer}
+.category:hover,.category.on{background:#ffe1eb;border-color:var(--rose)}
+.category .icon{font-size:34px;margin-bottom:8px}
+.category h3{font-size:14px}
+.status{text-align:center;color:#666;margin-bottom:20px}
+.status button{border:0;background:none;color:var(--rose);cursor:pointer;text-decoration:underline}
+.products{display:grid;grid-template-columns:repeat(4,1fr);gap:25px}
+.product{border:1px solid #eee;border-radius:15px;overflow:hidden;display:flex;flex-direction:column}
+.product-image{height:210px;background:#f7f7f7;display:flex;align-items:center;justify-content:center;font-size:70px}
+.product-info{padding:16px;display:flex;flex-direction:column;flex:1}
+.product-info h3{font-size:16px;margin-bottom:4px}
+.product-info small{color:#888;margin-bottom:8px}
+.price{color:var(--rose);font-size:18px;font-weight:bold;margin-bottom:14px;margin-top:auto}
+.product .btn{width:100%}
+.empty{grid-column:1/-1;text-align:center;color:#666;padding:40px 0}
+.promo{background:linear-gradient(135deg,var(--rose),#b71f59);color:#fff;border-radius:20px;padding:45px;display:flex;justify-content:space-between;align-items:center;gap:30px}
+.promo h2{font-size:34px;margin-bottom:10px}
+.promo .btn{background:#fff;color:var(--rose)}
+.contact{text-align:center;line-height:2}
+footer{background:#181818;color:#fff;padding:50px 25px}
+.footer-content{max-width:1200px;margin:auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+footer h2{color:var(--rose);margin-bottom:14px}
+footer h3{margin-bottom:14px}
+footer p,footer a{color:#bbb;font-size:14px;line-height:2;text-decoration:none}
+.copyright{max-width:1200px;margin:40px auto 0;padding-top:20px;border-top:1px solid #333;color:#999;font-size:13px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1500;display:none}
+.overlay.open{display:block}
+.cart{position:fixed;right:-420px;top:0;width:400px;max-width:100%;height:100%;background:#fff;z-index:2000;box-shadow:-5px 0 30px rgba(0,0,0,.15);padding:25px;transition:right .3s;overflow-y:auto;display:flex;flex-direction:column}
+.cart.open{right:0}
+.cart-header{display:flex;justify-content:space-between;margin-bottom:20px}
+.close-cart{border:0;background:none;font-size:28px;cursor:pointer}
+#cartItems{flex:1}
+.cart-item{display:flex;align-items:center;gap:12px;border-bottom:1px solid #eee;padding:14px 0}
+.cart-item-icon{font-size:34px}
+.cart-item-info{flex:1;font-size:14px}
+.qty{display:flex;align-items:center;gap:8px;margin-top:6px}
+.qty button{width:28px;height:28px;border:1px solid #ddd;border-radius:50%;background:#fff;cursor:pointer}
+.del{border:0;background:none;cursor:pointer;font-size:18px}
+.cart-total{margin-top:20px;padding-top:16px;border-top:2px solid #eee;font-size:20px;font-weight:bold}
+.cart label{display:block;font-size:13px;margin-top:14px}
+.cart input{width:100%;padding:11px;border:1px solid #ddd;border-radius:8px;margin-top:4px}
+.checkout{margin-top:18px;width:100%}
+@media(max-width:900px){.categories{grid-template-columns:repeat(3,1fr)}.products{grid-template-columns:repeat(2,1fr)}.footer-content{grid-template-columns:1fr 1fr}.hero h1{font-size:44px}}
+@media(max-width:600px){.topbar{padding:12px 15px}.logo{font-size:24px}.search{order:3;flex-basis:100%;max-width:none}nav{overflow-x:auto;justify-content:flex-start;gap:25px;padding:10px 15px}.hero{padding:50px 25px;min-height:400px}.hero h1{font-size:40px}.categories{grid-template-columns:repeat(2,1fr)}.products{gap:12px}.product-image{height:150px}.product-info{padding:12px}.promo{display:block;padding:30px 20px}.promo .btn{margin-top:20px}.footer-content{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.cart{transition:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topbar">
+    <div class="logo">Didi<span>Shop</span></div>
+    <div class="search">
+      <input type="search" id="searchInput" placeholder="Rechercher un produit..." aria-label="Rechercher un produit">
+      <button type="button" aria-label="Rechercher">🔍</button>
+    </div>
+    <button class="cart-button" id="openCart" aria-label="Ouvrir le panier">🛒<span class="cart-count" id="cartCount">0</span></button>
+  </div>
+  <nav>
+    <a href="#accueil">Accueil</a>
+    <a href="#boutique">Boutique</a>
+    <a href="#categories">Catégories</a>
+    <a href="#promotions">Promotions</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<div class="hero" id="accueil">
+  <div class="hero-content">
+    <small>Soins, beauté et confiance</small>
+    <h1>Découvrez votre <span>beauté</span></h1>
+    <p>Bienvenue chez Didi Shop. Une sélection de produits de beauté pour prendre soin de vous et révéler votre beauté naturelle. Livraison à Lomé.</p>
+    <a href="#boutique" class="btn">Voir la boutique</a>
+  </div>
+</div>
+
+<section id="categories">
+  <div class="section-title"><h2>Nos catégories</h2><p>Touchez une catégorie pour voir ses produits</p></div>
+  <div class="categories" id="cats"></div>
+</section>
+
+<section id="boutique">
+  <div class="section-title"><h2>Nos produits</h2><p>Ajoutez au panier, puis commandez sur WhatsApp</p></div>
+  <p class="status" id="status"></p>
+  <div class="products" id="products"></div>
+</section>
+
+<section id="promotions">
+  <div class="promo">
+    <div>
+      <h2>🔥 Offre spéciale</h2>
+      <p>Profitez de nos promotions beauté et prenez soin de vous à petit prix.</p>
+    </div>
+    <a href="#boutique" class="btn">Découvrir les offres</a>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="section-title"><h2>Contactez Didi Shop</h2><p>Une question ? Nous répondons sur WhatsApp.</p></div>
+  <div class="contact">
+    <p>📱 WhatsApp : +228 96 10 43 54</p>
+    <p>📍 Lomé, Togo</p>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-content">
+    <div><h2>Didi Shop</h2><p>Beauté & Élégance. Des produits sélectionnés pour prendre soin de vous.</p></div>
+    <div><h3>Boutique</h3><p><a href="#boutique">Produits</a></p><p><a href="#categories">Catégories</a></p><p><a href="#promotions">Promotions</a></p></div>
+    <div><h3>Informations</h3><p>Livraison</p><p>Paiement</p><p>Conditions</p></div>
+    <div><h3>Suivez-nous</h3><p>Facebook</p><p>Instagram</p><p>TikTok</p><p>WhatsApp</p></div>
+  </div>
+  <div class="copyright">© 2026 Didi Shop — Tous droits réservés.</div>
+</footer>
+
+<div class="overlay" id="overlay"></div>
+<aside class="cart" id="cart" aria-label="Panier">
+  <div class="cart-header"><h2>Mon panier</h2><button class="close-cart" id="closeCart" aria-label="Fermer le panier">×</button></div>
+  <div id="cartItems"></div>
+  <div class="cart-total">Total : <span id="cartTotal">$0.00</span></div>
+  <label for="cName">Votre nom</label>
+  <input id="cName" autocomplete="name">
+  <label for="cAddr">Quartier de livraison</label>
+  <input id="cAddr" placeholder="Ex : Tokoin, Bè, Adidogomé">
+  <button class="btn checkout" id="checkout">Commander sur WhatsApp</button>
+</aside>
+
+<script>
+/* ===== À MODIFIER ===== */
+const WHATSAPP = "22896104354"; // numéro de Didi Shop, indicatif inclus, sans + ni espaces
+
+const PRODUITS = [
+  {id:1, nom:"Fond de teint Maybelline", prix:14,  icone:"💄", cat:"Maquillage"},
+  {id:2, nom:"Rouge à lèvres mat",       prix:6,  icone:"💋", cat:"Maquillage"},
+  {id:3, nom:"Crème visage Nivea",       prix:10,  icone:"🧴", cat:"Soins du visage"},
+  {id:4, nom:"Sérum éclat",              prix:16,  icone:"💧", cat:"Soins du visage"},
+  {id:5, nom:"Beurre de karité",         prix:7,  icone:"🧼", cat:"Soins du corps"},
+  {id:6, nom:"Huile capillaire",         prix:20, icone:"✨", cat:"Cheveux"},
+  {id:7, nom:"Parfum Yara",              prix:30, icone:"🌸", cat:"Parfums"},
+  {id:8, nom:"Bracelet doré",            prix:8,  icone:"💍", cat:"Accessoires"}
+];
+const CATEGORIES = [
+  {nom:"Maquillage", icone:"💄"}, {nom:"Soins du visage", icone:"🧴"},
+  {nom:"Soins du corps", icone:"🧼"}, {nom:"Cheveux", icone:"💇🏾‍♀️"},
+  {nom:"Parfums", icone:"🌸"}, {nom:"Accessoires", icone:"💍"}
+];
+/* ====================== */
+
+const $ = id => document.getElementById(id);
+const usd = n => n.toLocaleString("en-US", {style:"currency", currency:"USD"});
+let panier = {};            // { idProduit: quantité }
+let filtreCat = "";
+let recherche = "";
+
+try { panier = JSON.parse(localStorage.getItem("didishop-panier")) || {}; } catch (e) { panier = {}; }
+function sauver() { try { localStorage.setItem("didishop-panier", JSON.stringify(panier)); } catch (e) {} }
+
+/* ----- Catégories ----- */
+function afficherCategories() {
+  $("cats").innerHTML = CATEGORIES.map(c =>
+    `<button class="category ${c.nom === filtreCat ? "on" : ""}" data-cat="${c.nom}">
+       <div class="icon">${c.icone}</div><h3>${c.nom}</h3></button>`).join("");
+}
+$("cats").addEventListener("click", e => {
+  const b = e.target.closest("[data-cat]");
+  if (!b) return;
+  filtreCat = filtreCat === b.dataset.cat ? "" : b.dataset.cat;
+  afficherCategories(); afficherProduits();
+  if (filtreCat) $("boutique").scrollIntoView({behavior:"smooth"});
+});
+
+/* ----- Produits ----- */
+function afficherProduits() {
+  const q = recherche.trim().toLowerCase();
+  const liste = PRODUITS.filter(p =>
+    (!filtreCat || p.cat === filtreCat) && (!q || p.nom.toLowerCase().includes(q)));
+  $("products").innerHTML = liste.length ? liste.map(p => `
+    <div class="product">
+      <div class="product-image">${p.icone}</div>
+      <div class="product-info">
+        <h3>${p.nom}</h3><small>${p.cat}</small>
+        <div class="price">${usd(p.prix)}</div>
+        <button class="btn" data-add="${p.id}">Ajouter au panier</button>
+      </div>
+    </div>`).join("") : `<p class="empty">Aucun produit trouvé. Essayez un autre mot ou une autre catégorie.</p>`;
+  $("status").innerHTML = (filtreCat || q)
+    ? `${liste.length} produit(s)${filtreCat ? " dans « " + filtreCat + " »" : ""} <button id="reset">Tout afficher</button>` : "";
+}
+$("products").addEventListener("click", e => {
+  const b = e.target.closest("[data-add]");
+  if (b) ajouter(+b.dataset.add);
+});
+$("status").addEventListener("click", e => {
+  if (e.target.id === "reset") { filtreCat = ""; recherche = ""; $("searchInput").value = ""; afficherCategories(); afficherProduits(); }
+});
+$("searchInput").addEventListener("input", e => { recherche = e.target.value; afficherProduits(); });
+
+/* ----- Panier ----- */
+function ajouter(id) { panier[id] = (panier[id] || 0) + 1; majPanier(); ouvrirPanier(); }
+function changerQte(id, delta) {
+  panier[id] = (panier[id] || 0) + delta;
+  if (panier[id] <= 0) delete panier[id];
+  majPanier();
+}
+function lignes() {
+  return Object.keys(panier).map(id => {
+    const p = PRODUITS.find(x => x.id == id);
+    return p ? {...p, qte: panier[id]} : null;
+  }).filter(Boolean);
+}
+function majPanier() {
+  const l = lignes();
+  const total = l.reduce((s, i) => s + i.prix * i.qte, 0);
+  $("cartCount").textContent = l.reduce((s, i) => s + i.qte, 0);
+  $("cartTotal").textContent = usd(total);
+  $("cartItems").innerHTML = l.length ? l.map(i => `
+    <div class="cart-item">
+      <div class="cart-item-icon">${i.icone}</div>
+      <div class="cart-item-info">
+        <strong>${i.nom}</strong><br>${usd(i.prix)}
+        <div class="qty">
+          <button data-q="-1" data-id="${i.id}" aria-label="Retirer un">−</button>
+          <span>${i.qte}</span>
+          <button data-q="1" data-id="${i.id}" aria-label="Ajouter un">+</button>
+        </div>
+      </div>
+      <button class="del" data-q="-999" data-id="${i.id}" aria-label="Supprimer ${i.nom}">🗑️</button>
+    </div>`).join("") : "<p>Votre panier est vide.</p>";
+  sauver();
+}
+$("cartItems").addEventListener("click", e => {
+  const b = e.target.closest("[data-q]");
+  if (b) changerQte(+b.dataset.id, +b.dataset.q);
+});
+function ouvrirPanier() { $("cart").classList.add("open"); $("overlay").classList.add("open"); }
+function fermerPanier() { $("cart").classList.remove("open"); $("overlay").classList.remove("open"); }
+$("openCart").onclick = ouvrirPanier;
+$("closeCart").onclick = fermerPanier;
+$("overlay").onclick = fermerPanier;
+document.addEventListener("keydown", e => { if (e.key === "Escape") fermerPanier(); });
+
+/* ----- Commande WhatsApp ----- */
+$("checkout").onclick = () => {
+  const l = lignes();
+  if (!l.length) { alert("Votre panier est vide."); return; }
+  const nom = $("cName").value.trim(), quartier = $("cAddr").value.trim();
+  if (!nom || !quartier) { alert("Indiquez votre nom et votre quartier de livraison."); return; }
+  const total = l.reduce((s, i) => s + i.prix * i.qte, 0);
+  const msg = "Bonjour Didi Shop 👋\nJe souhaite commander :\n" +
+    l.map(i => `- ${i.qte} × ${i.nom} : ${usd(i.prix * i.qte)}`).join("\n") +
+    `\n\nTotal : ${usd(total)}\nNom : ${nom}\nLivraison : ${quartier}`;
+  window.open("https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg), "_blank");
+};
+
+afficherCategories(); afficherProduits(); majPanier();
+</script>
+</body>
+</html>
