@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Didi Shop – Beauté à Lomé</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#2b1230;--orchid:#a8307f;--blush:#fbeef3;--gold:#c9a24b;--line:#e9d6df;--bg:#fffafc}
+*{box-sizing:border-box;margin:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:var(--ink);color:#fff;position:sticky;top:0;z-index:5}
+header h1{font-size:26px;letter-spacing:.5px}
+button{font:inherit;cursor:pointer;border:0;border-radius:8px}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+#cartBtn{background:var(--gold);color:var(--ink);padding:8px 14px;font-weight:500}
+.hero{padding:44px 20px 28px;max-width:720px;margin:auto}
+.hero h2{font-size:clamp(34px,8vw,56px);line-height:1.05}
+.hero p{margin-top:12px;color:#5b4560;max-width:46ch}
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding:8px 20px 18px;max-width:1000px;margin:auto}
+.chip{background:#fff;border:1px solid var(--line);padding:7px 14px;border-radius:99px;color:var(--ink)}
+.chip.on{background:var(--orchid);border-color:var(--orchid);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;padding:0 20px 60px;max-width:1000px;margin:auto}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.tile{height:110px;display:grid;place-items:center;font:600 44px 'Cormorant Garamond',serif;color:#fff}
+.info{padding:12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.info small{color:#7d6784}
+.info h3{font-size:19px;line-height:1.15}
+.buy{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:8px}
+.buy b{font-weight:500}
+.add{background:var(--ink);color:#fff;padding:7px 12px}
+aside{position:fixed;top:0;right:0;height:100%;width:min(380px,100%);background:#fff;box-shadow:-8px 0 30px rgba(43,18,48,.18);transform:translateX(105%);transition:transform .25s;z-index:10;display:flex;flex-direction:column}
+aside.open{transform:none}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
+.ch h2{font-size:26px}
+.x{background:none;font-size:22px;padding:4px 8px}
+#items{flex:1;overflow:auto;padding:8px 18px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{width:28px;height:28px;background:var(--blush);color:var(--ink)}
+.empty{color:#7d6784;padding:30px 0;text-align:center}
+.foot{padding:16px 18px;border-top:1px solid var(--line)}
+.total{display:flex;justify-content:space-between;font-size:18px;margin-bottom:12px}
+#order{width:100%;background:#1f9d55;color:#fff;padding:13px;font-weight:500}
+#shade{position:fixed;inset:0;background:rgba(43,18,48,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:9}
+#shade.open{opacity:1;pointer-events:auto}
+footer{text-align:center;padding:24px;color:#7d6784;font-size:14px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Didi Shop</h1>
+  <button id="cartBtn" aria-label="Ouvrir le panier">Panier (<span id="count">0</span>)</button>
+</header>
+
+<section class="hero">
+  <h2>La beauté, livrée à Lomé.</h2>
+  <p>Maquillage, soins, cheveux, parfums et accessoires. Choisis tes produits, puis envoie ta commande directement sur WhatsApp.</p>
+</section>
+
+<nav class="chips" id="chips" aria-label="Catégories"></nav>
+<main class="grid" id="grid"></main>
+
+<div id="shade"></div>
+<aside id="cart" aria-label="Panier">
+  <div class="ch"><h2>Ton panier</h2><button class="x" id="close" aria-label="Fermer">×</button></div>
+  <div id="items"></div>
+  <div class="foot">
+    <div class="total"><span>Total</span><b id="total">0 $</b></div>
+    <button id="order">Commander sur WhatsApp</button>
+  </div>
+</aside>
+
+<footer>Didi Shop · Lomé, Togo</footer>
+
+<script>
+var PHONE = "22896104354";
+var CATS = ["Tout","Maquillage","Visage","Corps","Cheveux","Parfums","Accessoires"];
+var COLORS = {Maquillage:"#a8307f",Visage:"#c46a8d",Corps:"#8a5a9e",Cheveux:"#5e3a7a",Parfums:"#b8873a",Accessoires:"#3f6f78"};
+var PRODUCTS = [
+  {id:1,name:"Rouge à lèvres mat",cat:"Maquillage",price:6},
+  {id:2,name:"Fond de teint fluide",cat:"Maquillage",price:12},
+  {id:3,name:"Palette yeux 12 teintes",cat:"Maquillage",price:15},
+  {id:4,name:"Crème hydratante visage",cat:"Visage",price:10},
+  {id:5,name:"Sérum éclat",cat:"Visage",price:14},
+  {id:6,name:"Lait corporel karité",cat:"Corps",price:9},
+  {id:7,name:"Huile de coco corps",cat:"Corps",price:7},
+  {id:8,name:"Shampoing fortifiant",cat:"Cheveux",price:8},
+  {id:9,name:"Huile pour cheveux",cat:"Cheveux",price:8},
+  {id:10,name:"Parfum floral 50 ml",cat:"Parfums",price:20},
+  {id:11,name:"Brume parfumée",cat:"Parfums",price:11},
+  {id:12,name:"Set de pinceaux",cat:"Accessoires",price:13}
+];
+var cart = {}, filter = "Tout";
+try { cart = JSON.parse(localStorage.getItem("didi-cart") || "{}"); } catch (e) { cart = {}; }
+
+function save(){ try { localStorage.setItem("didi-cart", JSON.stringify(cart)); } catch (e) {} }
+function money(n){ return n + " $"; }
+function find(id){ return PRODUCTS.filter(function(p){ return p.id == id; })[0]; }
+
+function renderChips(){
+  document.getElementById("chips").innerHTML = CATS.map(function(c){
+    return '<button class="chip' + (c === filter ? ' on' : '') + '" data-cat="' + c + '">' + c + '</button>';
+  }).join("");
+}
+function renderGrid(){
+  var list = PRODUCTS.filter(function(p){ return filter === "Tout" || p.cat === filter; });
+  document.getElementById("grid").innerHTML = list.map(function(p){
+    return '<article class="card"><div class="tile" style="background:' + COLORS[p.cat] + '">' + p.name.charAt(0) + '</div>' +
+      '<div class="info"><small>' + p.cat + '</small><h3>' + p.name + '</h3>' +
+      '<div class="buy"><b>' + money(p.price) + '</b><button class="add" data-add="' + p.id + '">Ajouter</button></div></div></article>';
+  }).join("");
+}
+function renderCart(){
+  var ids = Object.keys(cart).filter(function(id){ return cart[id] > 0; });
+  var total = 0, count = 0;
+  var html = ids.map(function(id){
+    var p = find(id), q = cart[id];
+    total += p.price * q; count += q;
+    return '<div class="row"><div><div>' + p.name + '</div><small>' + money(p.price) + '</small></div>' +
+      '<div class="qty"><button data-dec="' + id + '" aria-label="Retirer un">−</button><span>' + q + '</span><button data-inc="' + id + '" aria-label="Ajouter un">+</button></div></div>';
+  }).join("");
+  document.getElementById("items").innerHTML = html || '<p class="empty">Ton panier est vide. Ajoute un produit pour commencer.</p>';
+  document.getElementById("total").textContent = money(total);
+  document.getElementById("count").textContent = count;
+  save();
+}
+function toggle(open){
+  document.getElementById("cart").classList.toggle("open", open);
+  document.getElementById("shade").classList.toggle("open", open);
+}
+function order(){
+  var ids = Object.keys(cart).filter(function(id){ return cart[id] > 0; });
+  if (!ids.length) { toggle(true); return; }
+  var total = 0;
+  var lines = ids.map(function(id){
+    var p = find(id), q = cart[id];
+    total += p.price * q;
+    return "- " + q + " x " + p.name + " (" + money(p.price * q) + ")";
+  });
+  var msg = "Bonjour Didi Shop, je souhaite commander :\n" + lines.join("\n") + "\nTotal : " + money(total);
+  window.open("https://wa.me/" + PHONE + "?text=" + encodeURIComponent(msg), "_blank");
+}
+
+document.addEventListener("click", function(e){
+  var t = e.target;
+  if (t.dataset.cat) { filter = t.dataset.cat; renderChips(); renderGrid(); }
+  if (t.dataset.add) { cart[t.dataset.add] = (cart[t.dataset.add] || 0) + 1; renderCart(); }
+  if (t.dataset.inc) { cart[t.dataset.inc]++; renderCart(); }
+  if (t.dataset.dec) { cart[t.dataset.dec]--; renderCart(); }
+});
+document.getElementById("cartBtn").onclick = function(){ toggle(true); };
+document.getElementById("close").onclick = function(){ toggle(false); };
+document.getElementById("shade").onclick = function(){ toggle(false); };
+document.getElementById("order").onclick = order;
+
+renderChips(); renderGrid(); renderCart();
+</script>
+</body>
+</html>
